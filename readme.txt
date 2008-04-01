@@ -24,6 +24,8 @@ e.g.
 4. Go to Widget section and adding 'WDM News' in sidebar
 5. Go to Write section and select 'WDM News Adding'. Write a sentence in text field and add it! You can see appear under with checkbox if you want delete it.
 6. End, use it!
+Bye
+Walter
 
 == Frequently Asked Questions ==
 
