@@ -27,7 +27,9 @@ e.g.
 
 == Frequently Asked Questions ==
 
-Nothing...
+Why not adding a news at first time?
+
+It's possibile if script can't create table in your MySQL account. You can download wdmnews_db_mysql and import in your wordpress database, now run correctly.
 
 == Screenshots ==
 
