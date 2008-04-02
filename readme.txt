@@ -31,7 +31,7 @@ Walter
 
 = Why not adding a news at first time? =
 
-It's possibile if script can't create table in your MySQL account. You can download wdmnews_db_mysql.txt and import in your wordpress database, now run correctly. You can find this file on http://www.manosdepiedra.com/wdm-plugins/wdmnews_db_mysql.sql
+It's possibile if script can't create table in your MySQL account. You can download wdmnews_db_mysql.txt and import in your wordpress database, now run correctly. You can find this file on http://www.manosdepiedra.com/wp-content/uploads/2008/04/wdmnews-db-mysql.sql
 
 == Screenshots ==
 
