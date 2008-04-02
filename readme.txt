@@ -3,7 +3,7 @@ Contributors: Walter Dal Mut
 Donate link: http://www.manosdepiedra.com/
 Tags: news, little post
 Requires at least: 1.0
-Tested up to: 1.0
+Tested up to: 2.2
 Stable tag: 1.0
 
 This plugin show like widget a little sentence with date and time of publication.
@@ -24,12 +24,14 @@ e.g.
 4. Go to Widget section and adding 'WDM News' in sidebar
 5. Go to Write section and select 'WDM News Adding'. Write a sentence in text field and add it! You can see appear under with checkbox if you want delete it.
 6. End, use it!
+Bye
+Walter
 
 == Frequently Asked Questions ==
 
 = Why not adding a news at first time? =
 
-It's possibile if script can't create table in your MySQL account. You can download wdmnews_db_mysql.txt and import in your wordpress database, now run correctly. You can find this file on http://www.manosdepiedra.com/wdm-plugins/wdmnews_db_mysql.sql
+It's possibile if script can't create table in your MySQL account. You can download wdmnews_db_mysql.txt and import in your wordpress database, now run correctly. You can find this file on http://www.manosdepiedra.com/wp-content/uploads/2008/04/wdmnews-db-mysql.sql
 
 == Screenshots ==
 

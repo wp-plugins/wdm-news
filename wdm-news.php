@@ -3,9 +3,9 @@
 Plugin Name: WDM News
 Plugin URI: http://www.manosdepiedra.com
 Description: WDM News show your news on sidebar. When you activate it, you can move widget on left or right sidebar for show it. For adding or remove news you can use a submenu on plugin.
-Version: 1.0
+Version: 1.1
 Author: Walter Dal Mut
-Author URI: walter@manosdepiedra.com
+Author URI: http://www.manosdepiedra.com
 */
 
 add_action('init', 'wdmnews_init');
@@ -47,11 +47,11 @@ function wdmnews_install()
 	
 	$table_name = $table_prefix . "wdmnews";
 	
-	$sql = "CREATE TABLE ".$table_name." (
- 	     news_id mediumint(9) NOT NULL AUTO_INCREMENT,
- 	     news text NOT NULL,
- 	     data datetime NOT NULL,
- 	     PRIMARY KEY (news_id)
+	$sql = "CREATE TABLE IF NOT EXISTS '".$table_name."' (
+ 	     'news_id' mediumint(9) NOT NULL AUTO_INCREMENT,
+ 	     'news' text NOT NULL,
+ 	     'data' datetime NOT NULL,
+ 	     PRIMARY KEY  ('news_id')
  	   );";
 	
 	get_currentuserinfo();
