@@ -47,11 +47,11 @@ function wdmnews_install()
 	
 	$table_name = $table_prefix . "wdmnews";
 	
-	$sql = "CREATE TABLE ".$table_name." (
- 	     news_id mediumint(9) NOT NULL AUTO_INCREMENT,
- 	     news text NOT NULL,
- 	     data datetime NOT NULL,
- 	     PRIMARY KEY (news_id)
+	$sql = "CREATE TABLE IF NOT EXISTS '".$table_name."' (
+ 	     'news_id' mediumint(9) NOT NULL AUTO_INCREMENT,
+ 	     'news' text NOT NULL,
+ 	     'data' datetime NOT NULL,
+ 	     PRIMARY KEY  ('news_id')
  	   );";
 	
 	get_currentuserinfo();
