@@ -3,11 +3,10 @@
 Plugin Name: WDM News
 Plugin URI: http://www.manosdepiedra.com
 Description: WDM News show your news on sidebar. When you activate it, you can move widget on left or right sidebar for show it. For adding or remove news you can use a submenu on plugin.
-Version: 1.0
+Version: 1.2
 Author: Walter Dal Mut
 Author URI: walter@manosdepiedra.com
 */
-
 add_action('init', 'wdmnews_init');
 
 function widget_wdmnews_init() {
@@ -47,11 +46,11 @@ function wdmnews_install()
 	
 	$table_name = $table_prefix . "wdmnews";
 	
-	$sql = "CREATE TABLE ".$table_name." (
+	$sql = "CREATE TABLE IF NOT EXISTS ".$table_name." (
  	     news_id mediumint(9) NOT NULL AUTO_INCREMENT,
  	     news text NOT NULL,
  	     data datetime NOT NULL,
- 	     PRIMARY KEY (news_id)
+ 	     UNIQUE KEY news_id (news_id)
  	   );";
 	
 	get_currentuserinfo();
@@ -63,8 +62,42 @@ function wdmnews_install()
 
 function wdmnews_config_page() {
 	if ( function_exists('add_submenu_page') )
+	{
 		add_submenu_page('post.php', __('WDM News Adding'), __('WDM News Adding'), 'manage_options', 'wdmnews-key-config', 'wdmnews_conf');
+		add_submenu_page('plugins.php', __('WDM News Uninstall'), __('WDM News Uninstall'), 'manage_options', 'wdmnews-key-uninstall', 'wdmnews_uninstall'); 
+	}
 	
+}
+
+function wdmnews_uninstall()
+{
+	global $table_prefix, $wpdb, $user_level;
+	
+	$table_name = $table_prefix . "wdmnews";
+	?>
+	<div class="wrap">
+	<h2><?php _e('WDM News Uninstall'); ?></h2>
+	<p>If you want completely remove this pluging, you push this link:</p>
+	<div class="narrow">
+		<p><a href="?page=wdmnews-key-uninstall&delete=true">Uninstall</a></p>
+		<?php
+			if( $_GET["delete"] )
+			{
+			 	$sql = "DROP TABLE IF EXISTS ".$table_name;
+			 	get_currentuserinfo();
+	    		if ($user_level < 8) { return; }
+				
+				$wpdb->query($sql);
+				
+				echo '<div id="message" class="updated fade">Uninstall successful.</div>';
+				echo '<p>You must deactivate plugin from plugins page for complete uninstall.</p>';
+			}
+			
+		
+		?>
+	</div>
+	</div>
+	<?php 	
 }
 
 function wdmnews_conf() 
@@ -86,7 +119,7 @@ function wdmnews_conf()
 			{
 				$ok = $wpdb->query('DELETE FROM '.$table_prefix."wdmnews".' WHERE news_id = '.$news_id);
 				if( $ok == FALSE )
-					echo '<div id="message" class="updated fade"><p>Impossibile delete news</p></div>';
+					echo '<div id="error" class="updated fade"><p>Impossibile to delete news</p></div>';
 				else
 					echo '<div id="message" class="error"><p>News deleted</p></div>';
 			}
