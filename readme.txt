@@ -4,13 +4,13 @@ Donate link: http://www.manosdepiedra.com/
 Tags: news, little post, sentence
 Requires at least: 1.0
 Tested up to: 2.2
-Stable tag: 1.2
+Stable tag: 1.3
 
 This plugin show like widget a little sentence with date and time of publication.
 
 == Description ==
 
-This plugin show like widget a little sentence with date and time of publication. It's a news system for explain short message on sidebar. 
+This plugin show like widget a little sentence with date and time of publication. It's a news system for explain short message on sidebar. You can link your news at existing page or web site. 
 
 == Installation ==
 
@@ -42,3 +42,6 @@ It's possibile if script can't create table in your MySQL account. You can downl
 == Uninstall ==
 
 If you want unistall WDM News you go to plugins section and click on 'WDM News Uninstall', before this step you have completely remove plugins, you olny deactivate plugin from plugins section.
+
+== Upgrading ==
+If you have already install a previous version for upgrade this system you have only overwrite wdm-news file in wdm-news plugin directory.

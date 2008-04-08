@@ -3,7 +3,7 @@
 Plugin Name: WDM News
 Plugin URI: http://www.manosdepiedra.com
 Description: WDM News show your news on sidebar. When you activate it, you can move widget on left or right sidebar for show it. For adding or remove news you can use a submenu on plugin.
-Version: 1.2
+Version: 1.3
 Author: Walter Dal Mut
 Author URI: walter@manosdepiedra.com
 */
@@ -20,11 +20,11 @@ function widget_wdmnews_init() {
 		global $table_prefix, $wpdb, $user_level;
 		echo '<h2 class="widgettitle">News</h2>';
 		echo '<ul>';
-			$query = "SELECT news, data FROM " . $table_prefix . "wdmnews ORDER BY data desc";
+			$query = "SELECT news, link, data FROM " . $table_prefix . "wdmnews ORDER BY data desc";
 			
 			$news = $wpdb->get_results($query);
 			foreach ($news as $new) {
-				echo '<li><b>'.$new->data.'</b><br />'.$new->news."</li>";
+				echo '<li><a href="'.$new->link.'"><b>'.$new->data.'</b><br />'.$new->news."</a></li>";
 			}
 		echo '</ul>';
 	}
@@ -34,9 +34,7 @@ add_action('plugins_loaded', 'widget_wdmnews_init');
 
 
 function wdmnews_init()
-{
-	wdmnews_install();	 
-	
+{	
  	add_action('admin_menu', 'wdmnews_config_page');
 }
 
@@ -58,6 +56,9 @@ function wdmnews_install()
     
     require_once(ABSPATH . 'wp-admin/upgrade-functions.php');
     dbDelta($sql);  
+    
+    $sql = "ALTER TABLE ".$table_name." ADD link VARCHAR( 255 ) NOT NULL AFTER news";
+    $wpdb->query($sql);
 }
 
 function wdmnews_config_page() {
@@ -126,20 +127,21 @@ function wdmnews_conf()
 	}
 ?>	
 	<div class="wrap">
-	<h2><?php _e('WDM News Adding'); ?></h2>
+	<h2><?php _e('WDM News Adding'); wdmnews_install();?></h2>
 	<div class="narrow">
 		<form method="POST" action="">
-			<p><b>Insert a news:</b><input type="text" name="news" value="" size="50"/></p>
+			<p><b>Insert a news:</b><input type="text" name="news" value="" size="50" /></p>
+			<p><b>Link this news:<br />http://</b></span><input type="text" name="link" value="" size="40" /></p>
 			<p align="right"><input type="submit" name="submit" value="Send News" /></p>		
 		</form>
 		<form method="POST" action="">
 		<?php
 			//Show news...
-			$query = "SELECT news_id, news, data FROM " . $table_prefix . "wdmnews";
+			$query = "SELECT news_id, news, link, data FROM " . $table_prefix . "wdmnews ORDER BY data desc";
 			
 			$news = $wpdb->get_results($query);
 			foreach ($news as $new) {
-				echo '<p><input type="checkbox" name="news[]" value="'.$new->news_id.'" />'.$new->news."</p>";
+				echo '<p><input type="checkbox" name="news[]" value="'.$new->news_id.'" />'.$new->news." (".$new->link.")</p>";
 			}
 			
 			echo '<p align="right"><input type="submit" name="delnews" value="Delete checked" /></p>';
@@ -155,7 +157,8 @@ function wdmnews_add()
 	global $table_prefix, $wpdb, $user_level;
 	
 	$news = htmlentities($_POST["news"], ENT_QUOTES, "UTF-8");
- 	$query = "INSERT INTO ".$table_prefix . "wdmnews"." ( news, data ) VALUES ( '$news', NOW() )";
+	$link = htmlentities($_POST["link"], ENT_QUOTES, "UTF-8");
+ 	$query = "INSERT INTO ".$table_prefix . "wdmnews"." ( news, link, data ) VALUES ( '$news', 'http://$link', NOW() )";
  	$wpdb->query($query);
 }
 ?>
