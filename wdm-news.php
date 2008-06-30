@@ -174,6 +174,7 @@ function wdmnews_uninstall()
 			
 			delete_option( "wdmnews_version");
 			delete_option( "wdmnews_show_max_news" );
+			delete_option( "wdmnews_showtime" );
 		?>
 	</div>
 	</div>
