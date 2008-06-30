@@ -29,7 +29,7 @@ function widget_wdmnews_init() {
 				{
 					$data = substr( $data, 0, strpos( $data, " ") );
 				}
-				echo '<li><a target="_blank" href="'.$new->link.'"><b>'.$data.'</b><br />'.$new->news."</a><br />$source</li>";
+				echo '<li><a target="_blank" href="'.$new->link.'"><b>'.$data.'</b><br />'.$new->news."</a><br />From: $new->source</li>";
 			}
 		echo '</ul></li>';
 	}
