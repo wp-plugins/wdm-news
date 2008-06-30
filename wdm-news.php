@@ -107,7 +107,7 @@ function wdmnews_config()
 		<h2><?php _e('WDM News Settings'); ?></h2>
 		<?php if( $wdmnews_error == true ) echo "<p>What are you doing?</p>"?>
 		<form method="POST" action="" >
-			<p>Show max news: <input type="text" name="wdmnews_max_news" value="<?php echo get_option("wdmnews_show_max_news"); ?>" /></p>
+			<p>Show max news: <input type="text" name="wdmnews_max_news" size="3" value="<?php echo get_option("wdmnews_show_max_news"); ?>" /></p>
 			<p><input type="submit" name="wdmnews_submit" value="Set" /></p>
 		</form>
 	</div>
