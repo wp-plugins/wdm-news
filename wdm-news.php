@@ -8,6 +8,7 @@ Author: Walter Dal Mut
 Author URI: walter@manosdepiedra.com
 */
 add_action('init', 'wdmnews_init');
+register_activation_hook( __FILE__, 'wdmnews_install' );
 
 function widget_wdmnews_init() {
 
@@ -20,7 +21,7 @@ function widget_wdmnews_init() {
 		global $table_prefix, $wpdb, $user_level;
 		echo '<li class="sideitem"><h2 class="widgettitle">News</h2>';
 		echo '<ul>';
-			$query = "SELECT news, link, data FROM " . $table_prefix . "wdmnews ORDER BY data desc";
+			$query = "SELECT news, link, data FROM " . $table_prefix . "wdmnews ORDER BY data desc LIMIT 0, ".get_option( "wdmnews_show_max_news" );
 			
 			$news = $wpdb->get_results($query);
 			foreach ($news as $new) {
@@ -74,32 +75,41 @@ function wdmnews_install()
 	    $sql = "ALTER TABLE ".$table_name." ADD link VARCHAR( 255 ) NOT NULL AFTER news";
 	    $wpdb->query($sql);
 	    
-	    if( get_option( "wdmnews_version" ) === FALSE )
-	    {
-	    	add_option( "wdmnews_version", "1.5" );
-			add_option( "wdmnews_length", "5" );
-			$sql = "ALTER TABLE ".$table_prefix."wdmnews ADD source VARCHAR( 255 ) NOT NULL AFTER link";
-			$wpdb->query( $sql );
-		}
+		$sql = "ALTER TABLE ".$table_prefix."wdmnews ADD source VARCHAR( 255 ) NOT NULL AFTER link";
+		$wpdb->query( $sql );
+			
+		add_option( "wdmnews_version", "1.5" );
+		add_option( "wdmnews_show_max_news", "5" );
 	}
 }
 
 function wdmnews_config_page() {
 	if ( function_exists('add_submenu_page') )
 	{
-		add_submenu_page('post.php', __('WDM News Adding'), __('WDM News Adding'), 'manage_options', 'wdmnews-key-config', 'wdmnews_conf');
-		add_submenu_page('plugins.php', __('WDM News Settings'), __('WDM News Settings'), 'manage_options', 'wdmnews-key-config', 'wdmnews_config'); 
-		add_submenu_page('plugins.php', __('WDM News Uninstall'), __('WDM News Uninstall'), 'manage_options', 'wdmnews-key-uninstall', 'wdmnews_uninstall');
+		add_menu_page( 'WDM News', 'WDM News', 8, __FILE__, 'wdmnews_conf' );
+		add_submenu_page(__FILE__, __('WDM News Settings'), __('WDM News Settings'), 'manage_options', 'wdmnews-key-settings', 'wdmnews_config');
+		add_submenu_page(__FILE__, __('WDM News Uninstall'), __('WDM News Uninstall'), 'manage_options', 'wdmnews-key-uninstall', 'wdmnews_uninstall');
 	}
-	
 }
 
 function wdmnews_config()
 {
+	if( isset( $_POST["wdmnews_submit"]) AND $_POST["wdmnews_submit"] == "Set" )
+	{
+		$wdmnews_max_news = (int)$_POST["wdmnews_max_news"];
+		if( $wdmnews_max_news > 0)
+			update_option( "wdmnews_show_max_news", $_POST["wdmnews_max_news"] );
+		else
+			$wdmnews_error = true;
+	}
 	?>
 	<div class="wrap">
 		<h2><?php _e('WDM News Settings'); ?></h2>
-		
+		<?php if( $wdmnews_error == true ) echo "<p>What are you doing?</p>"?>
+		<form method="POST" action="" >
+			<p>Show max news: <input type="text" name="wdmnews_max_news" value="<?php echo get_option("wdmnews_show_max_news"); ?>" /></p>
+			<p><input type="submit" name="wdmnews_submit" value="Set" /></p>
+		</form>
 	</div>
 	<?php
 }
@@ -128,7 +138,8 @@ function wdmnews_uninstall()
 				echo '<p>You must deactivate plugin from plugins page for complete uninstall.</p>';
 			}
 			
-		
+			delete_option( "wdmnews_version");
+			delete_option( "wdmnews_show_max_news" );
 		?>
 	</div>
 	</div>
@@ -161,10 +172,10 @@ function wdmnews_conf()
 	}
 ?>	
 	<div class="wrap">
-	<h2><?php _e('WDM News Adding'); wdmnews_install();?></h2>
+	<h2><?php _e('WDM News Adding'); ?></h2>
 	<div class="narrow">
 		<form method="POST" action="">
-			<p><b>Insert a news:</b><input type="text" name="news" value="" size="50" /></p>
+			<p><b>Insert a news:</b><br /><textarea rows="5" cols="70" name="news"></textarea></p>
 			<p><b>Link this news:<br />http://</b></span><input type="text" name="link" value="" size="40" /></p>
 			<p align="right"><input type="submit" name="submit" value="Send News" /></p>		
 		</form>

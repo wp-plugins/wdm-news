@@ -4,13 +4,14 @@ Donate link: http://www.manosdepiedra.com/
 Tags: news, little post, sentence
 Requires at least: 1.0
 Tested up to: 2.2
-Stable tag: 1.4
+Stable tag: 1.5
 
 This plugin show like widget a little sentence with date and time of publication.
 
 == Description ==
 
 This plugin show like widget a little sentence with date and time of publication. It's a news system for explain short message on sidebar. You can link your news at existing page or web site. 
+With this plugin you can add your news and link it at your web site or other. You can choose a number of news you want display.
 
 == Installation ==
 
