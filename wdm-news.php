@@ -3,7 +3,7 @@
 Plugin Name: WDM News
 Plugin URI: http://www.manosdepiedra.com
 Description: WDM News show your news on sidebar. When you activate it, you can move widget on left or right sidebar for show it. For adding or remove news you can use a submenu on plugin.
-Version: 1.4
+Version: 1.5
 Author: Walter Dal Mut
 Author URI: walter@manosdepiedra.com
 */
@@ -38,36 +38,70 @@ function wdmnews_init()
  	add_action('admin_menu', 'wdmnews_config_page');
 }
 
+function wdmnews_installed()
+{
+	global $wpdb, $table_prefix;
+	$query = "SHOW TABLES LIKE '".$table_prefix."wdmnews'";
+	$install = $wpdb->get_var( $query );
+	
+	if( $install === NULL )
+		return false;
+	else
+		return true;
+}
+
 function wdmnews_install()
 {
 	global $table_prefix, $wpdb, $user_level;
-	
-	$table_name = $table_prefix . "wdmnews";
-	
-	$sql = "CREATE TABLE IF NOT EXISTS ".$table_name." (
- 	     news_id mediumint(9) NOT NULL AUTO_INCREMENT,
- 	     news text NOT NULL,
- 	     data datetime NOT NULL,
- 	     UNIQUE KEY news_id (news_id)
- 	   );";
-	
 	get_currentuserinfo();
     if ($user_level < 8) { return; }
-    
-    require_once(ABSPATH . 'wp-admin/upgrade-functions.php');
-    dbDelta($sql);  
-    
-    $sql = "ALTER TABLE ".$table_name." ADD link VARCHAR( 255 ) NOT NULL AFTER news";
-    $wpdb->query($sql);
+
+	//check if is installed.
+	if( !wdmnews_installed() ) //Compatibilities with previous version.
+	{
+		$table_name = $table_prefix . "wdmnews";
+		
+		$sql = "CREATE TABLE IF NOT EXISTS ".$table_name." (
+	 	     news_id mediumint(9) NOT NULL AUTO_INCREMENT,
+	 	     news text NOT NULL,
+	 	     data datetime NOT NULL,
+	 	     UNIQUE KEY news_id (news_id)
+	 	   );";
+	    
+	    require_once(ABSPATH . 'wp-admin/upgrade-functions.php');
+	    dbDelta($sql);  
+	    
+	    $sql = "ALTER TABLE ".$table_name." ADD link VARCHAR( 255 ) NOT NULL AFTER news";
+	    $wpdb->query($sql);
+	    
+	    if( get_option( "wdmnews_version" ) === FALSE )
+	    {
+	    	add_option( "wdmnews_version", "1.5" );
+			add_option( "wdmnews_length", "5" );
+			$sql = "ALTER TABLE ".$table_prefix."wdmnews ADD source VARCHAR( 255 ) NOT NULL AFTER link";
+			$wpdb->query( $sql );
+		}
+	}
 }
 
 function wdmnews_config_page() {
 	if ( function_exists('add_submenu_page') )
 	{
 		add_submenu_page('post.php', __('WDM News Adding'), __('WDM News Adding'), 'manage_options', 'wdmnews-key-config', 'wdmnews_conf');
-		add_submenu_page('plugins.php', __('WDM News Uninstall'), __('WDM News Uninstall'), 'manage_options', 'wdmnews-key-uninstall', 'wdmnews_uninstall'); 
+		add_submenu_page('plugins.php', __('WDM News Settings'), __('WDM News Settings'), 'manage_options', 'wdmnews-key-config', 'wdmnews_config'); 
+		add_submenu_page('plugins.php', __('WDM News Uninstall'), __('WDM News Uninstall'), 'manage_options', 'wdmnews-key-uninstall', 'wdmnews_uninstall');
 	}
 	
+}
+
+function wdmnews_config()
+{
+	?>
+	<div class="wrap">
+		<h2><?php _e('WDM News Settings'); ?></h2>
+		
+	</div>
+	<?php
 }
 
 function wdmnews_uninstall()
