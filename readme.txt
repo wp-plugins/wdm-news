@@ -4,7 +4,7 @@ Donate link: http://www.manosdepiedra.com/
 Tags: news, little post, sentence
 Requires at least: 1.0
 Tested up to: 2.2
-Stable tag: 1.6
+Stable tag: 1.7
 
 This plugin show like widget a little sentence with date and time of publication.
 

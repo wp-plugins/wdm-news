@@ -3,7 +3,7 @@
 Plugin Name: WDM News
 Plugin URI: http://www.manosdepiedra.com
 Description: WDM News show your news on sidebar. When you activate it, you can move widget on left or right sidebar for show it. For adding or remove news you can use a submenu on plugin.
-Version: 1.6
+Version: 1.7
 Author: Walter Dal Mut
 Author URI: walter@manosdepiedra.com
 */
@@ -21,7 +21,7 @@ function widget_wdmnews_init() {
 		global $table_prefix, $wpdb, $user_level;
 		echo '<li class="sideitem"><h2 class="widgettitle">News</h2>';
 		echo '<ul>';
-			$query = "SELECT news, link, data FROM " . $table_prefix . "wdmnews ORDER BY data desc LIMIT 0, ".get_option( "wdmnews_show_max_news" );
+			$query = "SELECT news, link, source, data FROM " . $table_prefix . "wdmnews ORDER BY data desc LIMIT 0, ".get_option( "wdmnews_show_max_news" );
 			$news = $wpdb->get_results($query);
 			foreach ($news as $new) {
 				$data = $new->data;
@@ -29,7 +29,7 @@ function widget_wdmnews_init() {
 				{
 					$data = substr( $data, 0, strpos( $data, " ") );
 				}
-				echo '<li><a target="_blank" href="'.$new->link.'"><b>'.$data.'</b><br />'.$new->news."</a></li>";
+				echo '<li><a target="_blank" href="'.$new->link.'"><b>'.$data.'</b><br />'.$new->news."</a><br />$source</li>";
 			}
 		echo '</ul></li>';
 	}
@@ -186,7 +186,7 @@ function wdmnews_conf()
 	global $table_prefix, $wpdb, $user_level;
 	
 	if( isset( $_POST["submit"]) ) :
-		wdmnews_add( $_POST["news"]);		
+		wdmnews_add( );		
 		?>
 		<div id="message" class="updated fade"><p><strong><?php _e('News: \''.$_POST["news"].'\' saved') ?></strong></p></div>
 		
@@ -211,6 +211,7 @@ function wdmnews_conf()
 	<div class="narrow">
 		<form method="POST" action="">
 			<p><b>Insert a news:</b><br /><textarea rows="5" cols="70" name="news"></textarea></p>
+			<p><b>Source: </b><input type="text" name="wdmnews_source" value="" /></p>
 			<p><b>Link this news:<br />http://</b></span><input type="text" name="link" value="" size="40" /></p>
 			<p align="right"><input type="submit" name="submit" value="Send News" /></p>		
 		</form>
@@ -238,7 +239,8 @@ function wdmnews_add()
 	
 	$news = htmlentities($_POST["news"], ENT_QUOTES, "UTF-8");
 	$link = htmlentities($_POST["link"], ENT_QUOTES, "UTF-8");
- 	$query = "INSERT INTO ".$table_prefix . "wdmnews"." ( news, link, data ) VALUES ( '$news', 'http://$link', NOW() )";
+	$source = htmlentities($_POST["wdmnews_source"], ENT_QUOTES, "UTF-8");
+ 	$query = "INSERT INTO ".$table_prefix . "wdmnews"." ( news, link, source, data ) VALUES ( '$news', 'http://$link', '$source',NOW() )";
  	$wpdb->query($query);
 }
 ?>
