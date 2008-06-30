@@ -3,7 +3,7 @@
 Plugin Name: WDM News
 Plugin URI: http://www.manosdepiedra.com
 Description: WDM News show your news on sidebar. When you activate it, you can move widget on left or right sidebar for show it. For adding or remove news you can use a submenu on plugin.
-Version: 1.5
+Version: 1.6
 Author: Walter Dal Mut
 Author URI: walter@manosdepiedra.com
 */
@@ -22,10 +22,14 @@ function widget_wdmnews_init() {
 		echo '<li class="sideitem"><h2 class="widgettitle">News</h2>';
 		echo '<ul>';
 			$query = "SELECT news, link, data FROM " . $table_prefix . "wdmnews ORDER BY data desc LIMIT 0, ".get_option( "wdmnews_show_max_news" );
-			
 			$news = $wpdb->get_results($query);
 			foreach ($news as $new) {
-				echo '<li><a href="'.$new->link.'"><b>'.$new->data.'</b><br />'.$new->news."</a></li>";
+				$data = $new->data;
+				if( get_option( "wdmnews_showtime" ) == "false" )
+				{
+					$data = substr( $data, 0, strpos( $data, " ") );
+				}
+				echo '<li><a target="_blank" href="'.$new->link.'"><b>'.$data.'</b><br />'.$new->news."</a></li>";
 			}
 		echo '</ul></li>';
 	}
@@ -77,9 +81,26 @@ function wdmnews_install()
 	    
 		$sql = "ALTER TABLE ".$table_prefix."wdmnews ADD source VARCHAR( 255 ) NOT NULL AFTER link";
 		$wpdb->query( $sql );
-			
-		add_option( "wdmnews_version", "1.5" );
-		add_option( "wdmnews_show_max_news", "5" );
+		
+		//Upgrading
+		$version = get_option( "wdmnews_version");	
+
+		if( $version === FALSE )
+			$version = "1.5";
+		else
+		{
+			if( $version == "1.5" )
+				$version = "1.6";
+		}
+		
+		switch( $version )
+		{
+			case "1.5":
+				add_option( "wdmnews_version", "1.5" );
+				add_option( "wdmnews_show_max_news", "5" );
+			case "1.6":
+				add_option( "wdmnews_showtime", "true" );
+		}
 	}
 }
 
@@ -101,13 +122,26 @@ function wdmnews_config()
 			update_option( "wdmnews_show_max_news", $_POST["wdmnews_max_news"] );
 		else
 			$wdmnews_error = true;
+		
+		//Change show time pubblications.
+		if( isset($_POST["wdmnews_showtime"]) )
+			update_option( "wdmnews_showtime", "true" );
+		else
+			update_option( "wdmnews_showtime", "false" );
 	}
+	
+	//Control if you want show time of publication.
+	$checked = get_option( "wdmnews_showtime" );
+	if( $checked != "false" )
+		$checked = " checked ";
+	
 	?>
 	<div class="wrap">
 		<h2><?php _e('WDM News Settings'); ?></h2>
 		<?php if( $wdmnews_error == true ) echo "<p>What are you doing?</p>"?>
 		<form method="POST" action="" >
 			<p>Show max news: <input type="text" name="wdmnews_max_news" size="3" value="<?php echo get_option("wdmnews_show_max_news"); ?>" /></p>
+			<p>Show time of publication: <input type="checkbox" name="wdmnews_showtime" value="true" <?php echo $checked; ?>/></p>
 			<p><input type="submit" name="wdmnews_submit" value="Set" /></p>
 		</form>
 	</div>
