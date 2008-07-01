@@ -41,3 +41,4 @@ If you want unistall WDM News you go to plugins section and click on 'WDM News U
 
 == Upgrading ==
 If you have already install a previous version for upgrade this system you have only overwrite wdm-news file in wdm-news plugin directory.
+If you have problem with the last version during or after upgrading you must uninstall the WDM-News and deactivate the plugin, after that you reactivate the plugin, now the system function correctly, if you have any problem or question you can contact me: walter@manosdepiedra.com
