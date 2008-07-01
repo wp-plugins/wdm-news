@@ -3,23 +3,22 @@
 Plugin Name: WDM News
 Plugin URI: http://www.manosdepiedra.com
 Description: WDM News show your news on sidebar. When you activate it, you can move widget on left or right sidebar for show it. For adding or remove news you can use a submenu on plugin.
-Version: 1.7
+Version: 1.8
 Author: Walter Dal Mut
 Author URI: walter@manosdepiedra.com
 */
 add_action('init', 'wdmnews_init');
 register_activation_hook( __FILE__, 'wdmnews_install' );
 
-function widget_wdmnews_init() {
-
-
+function widget_wdmnews_init() 
+{
 	if ( !function_exists('register_sidebar_widget') )
 		return;
 
 	function show_news()
 	{
 		global $table_prefix, $wpdb, $user_level;
-		echo '<li class="sideitem"><h2 class="widgettitle">News</h2>';
+		echo '<li class="sideitem"><h2 class="widgettitle">'.get_option("wdmnews_showname").'</h2>';
 		echo '<ul>';
 			$query = "SELECT news, link, source, data FROM " . $table_prefix . "wdmnews ORDER BY data desc LIMIT 0, ".get_option( "wdmnews_show_max_news" );
 			$news = $wpdb->get_results($query);
@@ -78,30 +77,40 @@ function wdmnews_install()
 	    
 	    $sql = "ALTER TABLE ".$table_name." ADD link VARCHAR( 255 ) NOT NULL AFTER news";
 	    $wpdb->query($sql);
-	    
-		$sql = "ALTER TABLE ".$table_prefix."wdmnews ADD source VARCHAR( 255 ) NOT NULL AFTER link";
-		$wpdb->query( $sql );
-		
-		//Upgrading
-		$version = get_option( "wdmnews_version");	
-
-		if( $version === FALSE )
-			$version = "1.5";
-		else
-		{
-			if( $version == "1.5" )
-				$version = "1.6";
-		}
-		
-		switch( $version )
-		{
-			case "1.5":
-				add_option( "wdmnews_version", "1.5" );
-				add_option( "wdmnews_show_max_news", "5" );
-			case "1.6":
-				add_option( "wdmnews_showtime", "true" );
-		}
 	}
+	
+	//Upgrading
+	$version = get_option( "wdmnews_version");	
+	if( $version == FALSE )
+		$version = "1.5";
+	else
+	{
+		if( $version == "1.5" )
+			$version = "1.6";
+		if( $version == "1.6" )
+			$version = "1.8";
+	}
+	
+	switch( $version )
+	{
+		case "1.5":
+			$sql = "ALTER TABLE ".$table_prefix."wdmnews ADD source VARCHAR( 255 ) NOT NULL AFTER link";
+			$wpdb->query( $sql );
+			add_option( "wdmnews_version", "1.5" );
+			add_option( "wdmnews_show_max_news", "5" );
+		case "1.6":
+			add_option( "wdmnews_showtime", "true" );
+		case "1.8":
+			add_option( "wdmnews_showname", "News");
+			update_option( "wdmnews_show_max_news", "5" );
+			update_option( "wdmnews_showtime", "true" );
+		default:
+			//Last version.
+			update_option( "wdmnews_version", "1.8" );
+			break;								// <---------------- THE ONLY BREAK!
+	}
+	
+	
 }
 
 function wdmnews_config_page() {
@@ -128,6 +137,10 @@ function wdmnews_config()
 			update_option( "wdmnews_showtime", "true" );
 		else
 			update_option( "wdmnews_showtime", "false" );
+			
+		$str = trim($_POST["wdmnews_showname"]);
+		if( !empty( $str ) )
+			update_option( "wdmnews_showname", $_POST["wdmnews_showname"] );
 	}
 	
 	//Control if you want show time of publication.
@@ -142,10 +155,21 @@ function wdmnews_config()
 		<form method="POST" action="" >
 			<p>Show max news: <input type="text" name="wdmnews_max_news" size="3" value="<?php echo get_option("wdmnews_show_max_news"); ?>" /></p>
 			<p>Show time of publication: <input type="checkbox" name="wdmnews_showtime" value="true" <?php echo $checked; ?>/></p>
+			<p>Name which you want show in main page: <input type="text" name="wdmnews_showname" value="<?php echo get_option( "wdmnews_showname" ); ?>" /></p>
 			<p><input type="submit" name="wdmnews_submit" value="Set" /></p>
 		</form>
 	</div>
+	
 	<?php
+	wdmnews_footer();
+}
+
+function wdmnews_footer()
+{
+	$footer = '<div class="wrap">
+		<p>Plugin by: Walter Dal Mut - <a target="_blank" href="http://www.walterdalmut.com">www.walterdalmut.com</a> - <a href="mailto:walter@manosdepiedra.com">walter@manosdepiedra.com</a></p>
+	</div>';
+	echo $footer;
 }
 
 function wdmnews_uninstall()
@@ -175,10 +199,12 @@ function wdmnews_uninstall()
 			delete_option( "wdmnews_version");
 			delete_option( "wdmnews_show_max_news" );
 			delete_option( "wdmnews_showtime" );
+			delete_option( "wdmnews_showname" );
 		?>
 	</div>
 	</div>
 	<?php 	
+	wdmnews_footer();
 }
 
 function wdmnews_conf() 
@@ -231,6 +257,7 @@ function wdmnews_conf()
 	</div>
 	</div>
 <?php	
+	wdmnews_footer();
 }
 
 function wdmnews_add()

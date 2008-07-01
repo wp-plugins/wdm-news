@@ -4,7 +4,7 @@ Donate link: http://www.manosdepiedra.com/
 Tags: news, little post, sentence
 Requires at least: 1.0
 Tested up to: 2.2
-Stable tag: 1.7
+Stable tag: 1.8
 
 This plugin show like widget a little sentence with date and time of publication.
 
@@ -27,7 +27,9 @@ Walter
 
 == Frequently Asked Questions ==
 
-Nothing
+Q) I have upgrade but my news aren't set in main page.
+R) Check your setting page, probably your SHOW MAX NEWS field are unset and generate an error. Please send me your upgrade procedure with from version and destination version for correct that error. Thank's
+walter@manosdepiedra.com
 
 == Screenshots ==
 
@@ -40,5 +42,5 @@ Nothing
 If you want unistall WDM News you go to plugins section and click on 'WDM News Uninstall', before this step you have completely remove plugins, you olny deactivate plugin from plugins section.
 
 == Upgrading ==
-If you have already install a previous version for upgrade this system you have only overwrite wdm-news file in wdm-news plugin directory.
+If you have already install a previous version for upgrade this system you have only overwrite wdm-news file in wdm-news plugin directory, after that you must reactivate the plugin for execute the upgrading function and use correctly the new functions.
 If you have problem with the last version during or after upgrading you must uninstall the WDM-News and deactivate the plugin, after that you reactivate the plugin, now the system function correctly, if you have any problem or question you can contact me: walter@manosdepiedra.com
