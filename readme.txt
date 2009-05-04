@@ -29,7 +29,7 @@ Walter
 
 Q) I have upgrade but my news aren't set in main page.
 R) Check your setting page, probably your SHOW MAX NEWS field are unset and generate an error. Please send me your upgrade procedure with from version and destination version for correct that error. Thank's
-walter@manosdepiedra.com
+info@walterdalmut.com
 
 == Screenshots ==
 
