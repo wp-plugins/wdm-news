@@ -1,11 +1,11 @@
 <?php
 /*
 Plugin Name: WDM News
-Plugin URI: http://www.walterdalmut.com
+Plugin URI: http://walterdalmut.com
 Description: WDM News show your news on sidebar. When you activate it, you can move widget on left or right sidebar for show it. For adding or remove news you can use a submenu on plugin.
 Version: 1.9
 Author: Walter Dal Mut
-Author URI: info@walterdalmut.com
+Author URI: http://walterdalmut.com
 */
 add_action('init', 'wdmnews_init');
 register_activation_hook( __FILE__, 'wdmnews_install' );
