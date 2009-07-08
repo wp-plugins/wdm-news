@@ -3,7 +3,7 @@
 Plugin Name: WDM News
 Plugin URI: http://walterdalmut.com
 Description: WDM News show your news on sidebar. When you activate it, you can move widget on left or right sidebar for show it. For adding or remove news you can use a submenu on plugin.
-Version: 1.9
+Version: 1.10
 Author: Walter Dal Mut
 Author URI: http://walterdalmut.com
 */
@@ -20,7 +20,7 @@ function widget_wdmnews_init()
 		global $table_prefix, $wpdb, $user_level;
 		echo '<li class="sideitem"><h2 class="widgettitle">'.get_option("wdmnews_showname").'</h2>';
 		echo '<ul>';
-			$query = "SELECT news, link, source, data FROM " . $table_prefix . "wdmnews ORDER BY data desc LIMIT 0, ".get_option( "wdmnews_show_max_news" );
+			$query = "SELECT news, link, source, news_date as data FROM " . $table_prefix . "wdmnews ORDER BY news_date desc LIMIT 0, ".get_option( "wdmnews_show_max_news" );
 			$news = $wpdb->get_results($query);
 			foreach ($news as $new) {
 				$data = $new->data;
@@ -68,15 +68,18 @@ function wdmnews_install()
 		$sql = "CREATE TABLE IF NOT EXISTS ".$table_name." (
 	 	     news_id mediumint(9) NOT NULL AUTO_INCREMENT,
 	 	     news text NOT NULL,
-	 	     data datetime NOT NULL,
-	 	     UNIQUE KEY news_id (news_id)
-	 	   );";
+	 	     news_date datetime NOT NULL,
+			 link VARCHAR( 255 ) NOT NULL,
+			 source VARCHAR( 255 ) NOT NULL,
+	 	     PRIMARY KEY news_id (news_id)
+	 	   )";
 	    
-	    require_once(ABSPATH . 'wp-admin/upgrade-functions.php');
-	    dbDelta($sql);  
-	    
-	    $sql = "ALTER TABLE ".$table_name." ADD link VARCHAR( 255 ) NOT NULL AFTER news";
-	    $wpdb->query($sql);
+	    $wpdb->query($sql);  
+		
+		add_option( "wdmnews_version", "1.8" );
+		add_option( "wdmnews_show_max_news", "5" );
+		add_option( "wdmnews_showtime", "true" );
+		add_option( "wdmnews_showname", "News");
 	}
 	
 	//Upgrading
@@ -244,7 +247,7 @@ function wdmnews_conf()
 		<form method="POST" action="">
 		<?php
 			//Show news...
-			$query = "SELECT news_id, news, link, data FROM " . $table_prefix . "wdmnews ORDER BY data desc";
+			$query = "SELECT news_id, news, link, news_date FROM " . $table_prefix . "wdmnews ORDER BY news_date desc";
 			
 			$news = $wpdb->get_results($query);
 			foreach ($news as $new) {
@@ -267,7 +270,7 @@ function wdmnews_add()
 	$news = htmlentities($_POST["news"], ENT_QUOTES, "UTF-8");
 	$link = htmlentities($_POST["link"], ENT_QUOTES, "UTF-8");
 	$source = htmlentities($_POST["wdmnews_source"], ENT_QUOTES, "UTF-8");
- 	$query = "INSERT INTO ".$table_prefix . "wdmnews"." ( news, link, source, data ) VALUES ( '$news', 'http://$link', '$source',NOW() )";
+ 	$query = "INSERT INTO ".$table_prefix . "wdmnews"." ( news, link, source, news_date ) VALUES ( '$news', 'http://$link', '$source',NOW() )";
  	$wpdb->query($query);
 }
 ?>

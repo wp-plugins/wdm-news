@@ -2,9 +2,9 @@
 Contributors: Walter Dal Mut
 Donate link: http://www.walterdalmut.com/
 Tags: news, little post, sentence
-Requires at least: 1.0
-Tested up to: 2.2
-Stable tag: 1.9
+Requires at least: 2.2
+Tested up to: 2.8
+Stable tag: 1.10
 
 This plugin show like widget a little sentence with date and time of publication.
 
