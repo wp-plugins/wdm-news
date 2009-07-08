@@ -76,7 +76,7 @@ function wdmnews_install()
 	    
 	    $wpdb->query($sql);  
 		
-		add_option( "wdmnews_version", "1.8" );
+		add_option( "wdmnews_version", "1.10" );
 		add_option( "wdmnews_show_max_news", "5" );
 		add_option( "wdmnews_showtime", "true" );
 		add_option( "wdmnews_showname", "News");
@@ -109,7 +109,7 @@ function wdmnews_install()
 			update_option( "wdmnews_showtime", "true" );
 		default:
 			//Last version.
-			update_option( "wdmnews_version", "1.8" );
+			update_option( "wdmnews_version", "1.10" );
 			break;								// <---------------- THE ONLY BREAK!
 	}
 	
