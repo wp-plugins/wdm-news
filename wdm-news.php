@@ -3,7 +3,7 @@
 Plugin Name: WDM News
 Plugin URI: http://walterdalmut.com
 Description: WDM News show your news on sidebar. When you activate it, you can move widget on left or right sidebar for show it. For adding or remove news you can use a submenu on plugin.
-Version: 1.10
+Version: 1.11
 Author: Walter Dal Mut
 Author URI: http://walterdalmut.com
 */
@@ -24,10 +24,8 @@ function widget_wdmnews_init()
 			$news = $wpdb->get_results($query);
 			foreach ($news as $new) {
 				$data = $new->data;
-				if( get_option( "wdmnews_showtime" ) == "false" )
-				{
-					$data = substr( $data, 0, strpos( $data, " ") );
-				}
+				$data = strtotime( $data );
+				$data = date( get_option("wdmnews_date_format"), $data);
 				echo '<li><a target="_blank" href="'.$new->link.'"><b>'.$data.'</b><br />'.$new->news."</a><br />From: $new->source</li>";
 			}
 		echo '</ul></li>';
@@ -76,10 +74,13 @@ function wdmnews_install()
 	    
 	    $wpdb->query($sql);  
 		
-		add_option( "wdmnews_version", "1.10" );
+		add_option( "wdmnews_version", "1.11" );
 		add_option( "wdmnews_show_max_news", "5" );
-		add_option( "wdmnews_showtime", "true" );
+		add_option( "wdmnews_date_format" );
+		//add_option( "wdmnews_showtime", "true" );
 		add_option( "wdmnews_showname", "News");
+		
+		update_option( "wdmnews_date_format", "M D, Y H:i" );
 	}
 	
 	//Upgrading
@@ -107,9 +108,12 @@ function wdmnews_install()
 			add_option( "wdmnews_showname", "News");
 			update_option( "wdmnews_show_max_news", "5" );
 			update_option( "wdmnews_showtime", "true" );
+		case "1.10":
+			delete_option( "wdmnews_showtime" );
+			add_option( "wdmnews_date_format", "M D, Y H:i" );
 		default:
 			//Last version.
-			update_option( "wdmnews_version", "1.10" );
+			update_option( "wdmnews_version", "1.11" );
 			break;								// <---------------- THE ONLY BREAK!
 	}
 	
@@ -136,20 +140,14 @@ function wdmnews_config()
 			$wdmnews_error = true;
 		
 		//Change show time pubblications.
-		if( isset($_POST["wdmnews_showtime"]) )
-			update_option( "wdmnews_showtime", "true" );
-		else
-			update_option( "wdmnews_showtime", "false" );
+		$str = trim( $_POST["wdmnews_date_format"] );
+		if( !empty( $str ) )
+			update_option( "wdmnews_date_format", $str );
 			
 		$str = trim($_POST["wdmnews_showname"]);
 		if( !empty( $str ) )
-			update_option( "wdmnews_showname", $_POST["wdmnews_showname"] );
+			update_option( "wdmnews_showname", $str );
 	}
-	
-	//Control if you want show time of publication.
-	$checked = get_option( "wdmnews_showtime" );
-	if( $checked != "false" )
-		$checked = " checked ";
 	
 	?>
 	<div class="wrap">
@@ -157,7 +155,7 @@ function wdmnews_config()
 		<?php if( $wdmnews_error == true ) echo "<p>What are you doing?</p>"?>
 		<form method="POST" action="" >
 			<p>Show max news: <input type="text" name="wdmnews_max_news" size="3" value="<?php echo get_option("wdmnews_show_max_news"); ?>" /></p>
-			<p>Show time of publication: <input type="checkbox" name="wdmnews_showtime" value="true" <?php echo $checked; ?>/></p>
+			<p>Date format: <input type="text" name="wdmnews_date_format" size="10" value="<?php echo get_option("wdmnews_date_format"); ?>" /></p>
 			<p>Name which you want show in main page: <input type="text" name="wdmnews_showname" value="<?php echo get_option( "wdmnews_showname" ); ?>" /></p>
 			<p><input type="submit" name="wdmnews_submit" value="Set" /></p>
 		</form>
@@ -170,7 +168,7 @@ function wdmnews_config()
 function wdmnews_footer()
 {
 	$footer = '<div class="wrap">
-		<p>Plugin by: Walter Dal Mut - <a target="_blank" href="http://www.walterdalmut.com">www.walterdalmut.com</a> - <a href="mailto:walter@manosdepiedra.com">walter@manosdepiedra.com</a></p>
+		<p>Plugin by: Walter Dal Mut - <a target="_blank" href="http://www.walterdalmut.com">www.walterdalmut.com</a> - <a href="mailto:info@walterdalmut.com">info@walterdalmut.com</a></p>
 	</div>';
 	echo $footer;
 }
@@ -201,7 +199,7 @@ function wdmnews_uninstall()
 			
 			delete_option( "wdmnews_version");
 			delete_option( "wdmnews_show_max_news" );
-			delete_option( "wdmnews_showtime" );
+			delete_option( "wdm_news_date_format" );
 			delete_option( "wdmnews_showname" );
 		?>
 	</div>
